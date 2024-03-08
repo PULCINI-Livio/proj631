@@ -67,28 +67,14 @@ S = [
       "outlook":"sunny",
       "humidity":"normal",
       "windy":"false",
-      "class":"n"
+      "class":"p"
     },
     {
     "target":"class",
       "outlook":"sunny",
       "humidity":"normal",
       "windy":"true",
-      "class":"n"
-    },
-    {
-    "target":"class",
-      "outlook":"sunny",
-      "humidity":"high",
-      "windy":"true",
-      "class":"n"
-    },
-    {
-    "target":"class",
-      "outlook":"sunny",
-      "humidity":"normal",
-      "windy":"false",
-      "class":"n"
+      "class":"p"
     },
     {
     "target":"class",
@@ -96,5 +82,19 @@ S = [
       "humidity":"high",
       "windy":"true",
       "class":"p"
+    },
+    {
+    "target":"class",
+      "outlook":"sunny",
+      "humidity":"normal",
+      "windy":"false",
+      "class":"p"
+    },
+    {
+    "target":"class",
+      "outlook":"sunny",
+      "humidity":"high",
+      "windy":"true",
+      "class":"n"
     }
     ]

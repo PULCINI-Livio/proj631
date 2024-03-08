@@ -3,13 +3,17 @@ import data_test
 import math
 import structure_donnees as sd
 
-def lecture(csvfile):
+def lecture(csvfile) -> dict:
     """
-    enregistre les données de manière organisé
+    enregistre les données de manière organisé sous forme de dictionnaire
+
+    Parameters
+    ----------
+    csvfile : un fichier csv avec un header
 
     Returns
     -------
-    list
+    dict
 
     """
     data_final = {"liste_attributs":None, "liste_valeur_possible":{}, "donnees":[]}
@@ -28,22 +32,30 @@ def lecture(csvfile):
     #creation des clés pour les listes de valeurs possibles
     # acces valeur data["liste_valeur_possible"][]
 
-    for att in data_final["liste_attributs"]:
-        valeurs_possibles = []
+    
         
-        for val in data["liste_attributs"](1,5):
+    csv_sans_header = csv_to_list[1:] 
 
-        data["liste_valeur_possible"][att] = valeurs_possibles
-    
-    #remplissage des valeur des clés
-    
+    for i in range(len(csv_sans_header[0])): # Boucle pour chaque attribut
+        valeurs_possibles = []
+        # Remplissage des valeurs possible pour le i-eme attribut
+        for ensemble in csv_sans_header: 
+            valeurs_possibles.append(ensemble[i])
 
+        # Retirer les doublons
+        # Créer un dictionnaire avec les éléments de la liste comme clés et None comme valeurs
+        dict_sans_doublons = dict.fromkeys(valeurs_possibles)  
+        # Récupérer les clés du dictionnaire sous forme de liste
+        liste_sans_doublons = list(dict_sans_doublons.keys())
 
+        # Remplissage du dictionnaire résultat
+        att = data_final["liste_attributs"][i]
+        data_final["liste_valeur_possible"][att] = liste_sans_doublons
+        data_final["donnees"] = csv_sans_header
 
+    return data_final
 
-
-
-lecture("donnees/golf.csv")
+#print(lecture("donnees/golf.csv"))
 
 def I(p:int, n:int) -> float:
     """
@@ -60,25 +72,115 @@ def I(p:int, n:int) -> float:
         return -(p/(p+n))*(math.log2((p/(p+n))))-(n/(n+p))*(math.log2((n/(n+p))))
 
 
-def E(A:sd.Arbre) -> float:
+def pi_ni(i:int, att:str, codex:dict) -> tuple:
     """
-    summary
+    Retourne p (i.e n) le nombre de fois qu'apparait la première (i.e seconde) valeur de l'attribut cible 
+    et la i-eme valeur de att dans le codex
+    
+    Parameters
+    ----------
+    i : int
+        l'index de la valeur de l'attribut dans le codex
+    att : str
+        l'attribut choisi
+    codex : dict
+        le dictionnaire organisé des données
+
+    Returns
+    -------
+    tuple
+
+    """
+    p = 0
+    n = 0
+    valeur_att = codex["liste_valeur_possible"][att][i] # Ex: 'sunny' pour i=1 
+    target = list(codex["liste_valeur_possible"].keys())[-1] # Ex: 'play'
+    target_values = codex["liste_valeur_possible"][target] # Ex: ['no','yes']
+
+    for donnee in codex["donnees"]: # donnee est un tableau de type ['sunny', 'hot', 'high', 'false', 'no']
+        if valeur_att in donnee:
+            if target_values[0] in donnee:
+                p+=1
+            else:
+                n+=1
+    return (p,n)
+
+#print(pi_ni(2,'outlook',lecture("donnees/golf.csv")))
+
+def p_n(target_att:str, codex:dict) -> tuple:
+    """
+    Retourne p (i.e n) le nombre de fois qu'apparait la première (i.e seconde) valeur
+    de l'attribut cible dans le codex
+    
+    Parameters
+    ----------
+    att : str
+        l'attribut choisi
+    codex : dict
+        le dictionnaire organisé des données
+
+    Returns
+    -------
+    tuple
+
+    """
+    p = 0
+    n = 0
+    target_values = codex["liste_valeur_possible"][target_att] # Ex: ['no','yes']
+    
+    for donnee in codex["donnees"]: # donnee est un tableau de type ['sunny', 'hot', 'high', 'false', 'no']
+        if target_values[0] in donnee:
+            p+=1
+        else:
+            n+=1
+    return (p,n)
+
+
+
+def E(A:str, codex:dict) -> float:
+    """
+    Calcul une moyenne pondérée
+
+    Parameters
+    ----------
+    A : str
+        un attribut
+    codex : dict
+        le dictionnaire organisé des données
+        
+    Returns
+    -------
+    float
+
+    """
+    res = 0
+    tuple_p_n = p_n(A,codex)
+    for i in range(len(codex["liste_valeur_possible"][A])):
+        tuple_pi_ni = pi_ni(i,A,codex)
+        res += ((tuple_pi_ni[0]+tuple_pi_ni[1])/(tuple_p_n[0]+tuple_p_n[1]))*I(tuple_pi_ni[0],tuple_pi_ni[1])
+    return res
+
+print(E("outlook",lecture("donnees/golf.csv")))
+
+
+
+def gain(A:str, codex:dict) -> float:
+    """
+    Calcul le gain d'un attribut
+
+    Parameters
+    ----------
+    A : str
+        un attribut
+    codex : dict
+        le dictionnaire organisé des données
 
     Returns
     -------
     float
 
     """
-    pass
+    tuple_p_n = p_n(A,codex)
+    return I(tuple_p_n[0],tuple_p_n[1])-E(A,codex)
 
-
-def gain(A:sd.Arbre)-> float:
-    """
-    summary
-
-    Returns
-    -------
-    float
-
-    """
-    pass
+print(gain("outlook",lecture("donnees/golf.csv")))
