@@ -23,7 +23,7 @@ class Arbre():
         str
 
         """
-        return f"Label : {self.label}\nMb : {self.mb}\nChilds : {self.childs}\n"
+        return f"Label : {self.label}\nMb : {self.mb}\nChilds : {self.childs}\nBranchs : {self.branchs}\n"
     
     # Getters and Setters
     def get_label(self):
@@ -49,6 +49,7 @@ class Arbre():
 
     def set_branchs(self, new_branchs):
         self.branchs = new_branchs
+        
         
     def add_child(self, new_child):
         self.childs.append(new_child)
