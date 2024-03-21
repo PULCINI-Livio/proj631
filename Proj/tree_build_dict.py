@@ -48,8 +48,9 @@ def partitionner(att:str, val:str, codex:dict):
         un nouveau dictionnaire organisé selon un attribut
 
     """
+
     
-    #print(codex)
+    #print(f"codex avant partition :{codex}")
 
     #Traitement clé liste_attribut
     #print(f"codex avant remove {codex}")
@@ -150,13 +151,14 @@ def tree_build_bis(codex:dict):
     
     #Condition d'arret 1: L’ensemble d’exemples associés au noeud courant est vide.
     if codex["donnees"] == []: 
-        return NoeudDecision()
+        return {"resultat":"null"}
 
     #Condition d'arret 2: Tous les exemples d’apprentissage associés au noeud courant ont la même valeur de classe,
     #auquel cas une feuille avec cette valeur de classe est retournée.
     if len(list(codex["liste_valeurs_possibles"].values())[-1]) == 1: #On va chercher la ou les valeurs de classe
-        return NoeudDecision(resultat = list(codex["liste_valeurs_possibles"].values())[-1][0])
-    
+        print("meme valeur")
+        return {"resultat":list(codex["liste_valeurs_possibles"].values())[-1][0]}
+        
     #Condition d'arret 3: Tous les attributs ont été utilisés sur la branche en cours de développement, auquel cas une
     #feuille est retournée avec la classe majoritaire parmi les exemples associés au noeud courant.
     if len(codex["liste_attributs"]) == 1:
@@ -164,11 +166,11 @@ def tree_build_bis(codex:dict):
         val2 = list(codex["liste_valeurs_possibles"].values())[-1][1]
         liste = codex["donnees"]
         if occurence_val(val1,liste) > occurence_val(val2,liste):
-            return NoeudDecision(resultat=val1)
+            return {"resultat":val1}
         elif occurence_val(val1,liste) < occurence_val(val2,liste):
-            return NoeudDecision(resultat=val2)
+            return {"resultat":val2}
         else:
-            return NoeudDecision()
+            return {}
 
 
     best_att = get_best_att(codex)
@@ -178,13 +180,13 @@ def tree_build_bis(codex:dict):
     
     sous_arbre = {}
     for val in liste_vals_best_att:
+        print(val)
         codex_copy = copy.deepcopy(codex)
         sous_arbre[val] = tree_build_bis(partitionner(best_att,val,codex_copy))
         
     
-    return NoeudDecision(attribut=best_att, branches=sous_arbre)
+    return {"attribut":best_att, "branches":sous_arbre}
     
-        
 
 #codex = lecture("donnees/golf_copy.csv")
 #print(list(codex["liste_valeurs_possibles"].values())[-1][0])
@@ -200,6 +202,6 @@ def tree_build_bis(codex:dict):
 #print(list(codex["liste_valeurs_possibles"].values())[-1])
 
 print(tree_build("donnees/golf.csv"))
-
 #print(get_best_att(lecture("donnees/golf.csv")))
-#print(partitionner("humidity",'high',lecture("donnees/golf.csv")))
+#print(partitionner("humidity",'normal',lecture("donnees/golf.csv")))
+

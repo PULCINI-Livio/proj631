@@ -1,59 +1,38 @@
 
 
-class Arbre():
-    """
-    Une classe pour représenter un arbre avec son label, 
-    sa branche mère mb,
-    la liste de ses noeuds enfants
-    et la liste de ses branches qui le lient à ses enfants
-    """
-    
-    def __init__(self, label, mb, childs, branchs):
-        self.label = label
-        self.mb = mb
-        self.childs = childs
-        self.branchs = branchs
-
-    def __str__(self):
+class NoeudDecision:
+    def __init__(self, attribut:str=None, valeur=None, branches=None, resultat=None):
         """
-        affichage des attributs du noeud
 
-        Returns
-        -------
-        str
+        Parameters
+        ----------
+        attribut : str
+            Attribut sur lequel se fait la division
+        valeur : 
+            Valeur de l'attribut pour cette division
+        branches : dict
+            Sous-arbres pour chaque valeur de l'attribut
+        resultat  
+            Résultat (étiquette de classe) pour ce nœud s'il est une feuille
 
         """
-        return f"Label : {self.label}\nMb : {self.mb}\nChilds : {self.childs}\nBranchs : {self.branchs}\n"
-    
-    # Getters and Setters
-    def get_label(self):
-        return self.label
-
-    def get_mb(self):
-        return self.mb
-    
-    def get_childs(self):
-        return self.childs
-    
-    def get_branchs(self):
-        return self.branchs
-    
-    def set_label(self, new_label):
-        self.label = new_label
-
-    def set_mb(self, new_mb):
-        self.mb = new_mb
-
-    def set_childs(self, new_childs):
-        self.childs = new_childs
-
-    def set_branchs(self, new_branchs):
-        self.branchs = new_branchs
         
-        
-    def add_child(self, new_child):
-        self.childs.append(new_child)
+        self.attribut = attribut  # Attribut sur lequel se fait la division
+        self.valeur = valeur  # Valeur de l'attribut pour cette division
+        self.branches = branches if branches is not None else {}  # Sous-arbres pour chaque valeur de l'attribut
+        self.resultat = resultat  # Résultat (étiquette de classe) pour ce nœud s'il est une feuille
 
-    def add_branch(self, new_branch):
-        self.branchs.append(new_branch)
+    def __str__(self, niveau=0):
+        # Construire la chaîne de caractères pour ce nœud
+        representation = "  " * niveau
+        if self.attribut is not None:
+            representation += f"Attribut: {self.attribut}, "
+        representation += f"Valeur: {self.valeur}, Résultat: {self.resultat}\n"
+
+        # Parcourir récursivement les branches et leurs enfants
+        for valeur, enfant in self.branches.items():
+            representation += "  " * (niveau + 1) + f"Valeur: {valeur}\n"
+            representation += enfant.__str__(niveau + 2)  # Appel récursif pour l'enfant
+
+        return representation
     
