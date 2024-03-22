@@ -25,9 +25,10 @@ class NoeudDecision:
     def __str__(self, niveau=0):
         # Construire la chaîne de caractères pour ce nœud
         representation = "  " * niveau
-        if self.attribut is not None:
-            representation += f"Attribut: {self.attribut}, "
-        representation += f"Valeur: {self.valeur}, Résultat: {self.resultat}\n"
+        #if self.attribut is not None:
+        representation += f"Attribut: {self.attribut}, "
+        
+        representation += f"Résultat: {self.resultat}\n"
 
         # Parcourir récursivement les branches et leurs enfants
         for valeur, enfant in self.branches.items():

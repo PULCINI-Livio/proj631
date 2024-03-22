@@ -1,7 +1,6 @@
 from fcts_math_et_conversion_donnees import *
 from structure_donnees import *
-import pandas as pd
-import copy
+
 
 def get_best_att(codex:dict):
     """
@@ -48,7 +47,7 @@ def partitionner(att:str, val:str, codex:dict):
         un nouveau dictionnaire organisé selon un attribut
 
     """
-    
+    print(codex)
     #print(codex)
 
     #Traitement clé liste_attribut
@@ -67,9 +66,14 @@ def partitionner(att:str, val:str, codex:dict):
         else:
             donnees.remove(donnees[i])
 
+    #Traitement clé all_valeurs_att_restant
+    if att in codex['all_valeurs_att_restant']:
+        codex['all_valeurs_att_restant'].pop(att)
+    
     #Traitement clé liste_valeurs_possibles
     if att in codex['liste_valeurs_possibles']:
         codex['liste_valeurs_possibles'].pop(att)
+
     #Vérification que les valeurs possibles sont toutes présentes dans les donnees
     for attribut in codex['liste_attributs']:
         for valeur in codex['liste_valeurs_possibles'][attribut]:
@@ -149,8 +153,10 @@ def tree_build_bis(codex:dict):
     """
     
     #Condition d'arret 1: L’ensemble d’exemples associés au noeud courant est vide.
+    
     if codex["donnees"] == []: 
-        return NoeudDecision()
+        print(1111111111)
+        return NoeudDecision(resultat="null")
 
     #Condition d'arret 2: Tous les exemples d’apprentissage associés au noeud courant ont la même valeur de classe,
     #auquel cas une feuille avec cette valeur de classe est retournée.
@@ -173,18 +179,18 @@ def tree_build_bis(codex:dict):
 
     best_att = get_best_att(codex)
     #print(f"best attribut: {best_att}")
-
-    liste_vals_best_att = codex["liste_valeurs_possibles"][best_att]
+    print("best attribut :" + best_att)
+    liste_vals_best_att = codex["all_valeurs_att_restant"][best_att]
     
     sous_arbre = {}
     for val in liste_vals_best_att:
         codex_copy = copy.deepcopy(codex)
+        print(val)
         sous_arbre[val] = tree_build_bis(partitionner(best_att,val,codex_copy))
         
-    
     return NoeudDecision(attribut=best_att, branches=sous_arbre)
     
-        
+
 
 #codex = lecture("donnees/golf_copy.csv")
 #print(list(codex["liste_valeurs_possibles"].values())[-1][0])

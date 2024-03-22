@@ -1,6 +1,6 @@
 import csv
 import math
-
+import copy
 def lecture(csvfile:str) -> dict:
     """
     enregistre les données de manière organisé sous forme de dictionnaire
@@ -14,7 +14,7 @@ def lecture(csvfile:str) -> dict:
     dictionnaire de la forme: {"liste_attributs":None, "liste_valeurs_possibles":{}, "donnees":[]}
 
     """
-    codex = {"liste_attributs":None, "liste_valeurs_possibles":{}, "donnees":[]}
+    codex = {"liste_attributs":None, "liste_valeurs_possibles":{}, "donnees":[], "all_valeurs_att_restant":{}}
 
     #extraction csv dans tableau
     csv_to_list = [] #tableau de tableaux
@@ -49,7 +49,8 @@ def lecture(csvfile:str) -> dict:
             att = codex["liste_attributs"][i]
             codex["liste_valeurs_possibles"][att] = liste_sans_doublons
             codex["donnees"] = csv_to_list_sans_header
-
+    codex["all_valeurs_att_restant"] = copy.deepcopy(codex["liste_valeurs_possibles"])
+    
     return codex
 
 #print(lecture("donnees/golf.csv"))
