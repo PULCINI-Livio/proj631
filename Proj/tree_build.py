@@ -87,10 +87,10 @@ def partitionner(att:str, val:str, codex:dict):
     return codex
             
 
-def tree_build(csvfile:str):
+def tree_build_fct(csvfile:str):
     """
     Retourne l'arbre créé à partir des données fournis en paramètre
-
+    N'affiche pas les branches null
     Parameters
     ----------
     csvfile : str
@@ -104,13 +104,91 @@ def tree_build(csvfile:str):
     """
     codex = lecture(csvfile)
 
-    return tree_build_bis(codex)
+    return tree_build_fct_bis(codex)
     
 
 
-def tree_build_bis(codex:dict):
+def tree_build_fct_bis(codex:dict):
     """
     Retourne l'arbre créé à partir des données fournis en paramètre
+    N'affiche pas les branches null
+
+    Parameters
+    ----------
+    codex : dict
+        le dictionnaire contenant les données organisées
+
+    Returns
+    -------
+    res : Arbre
+        l'arbre issu des données d'entrainement
+
+    """
+    
+    #Condition d'arret 1: L’ensemble d’exemples associés au noeud courant est vide.
+    
+    if codex["donnees"] == []:
+        return NoeudDecision(resultat="null")
+
+    #Condition d'arret 2: Tous les exemples d’apprentissage associés au noeud courant ont la même valeur de classe,
+    #auquel cas une feuille avec cette valeur de classe est retournée.
+    if len(list(codex["liste_valeurs_possibles"].values())[-1]) == 1: #On va chercher la ou les valeurs de classe
+        return NoeudDecision(resultat = list(codex["liste_valeurs_possibles"].values())[-1][0])
+    
+    #Condition d'arret 3: Tous les attributs ont été utilisés sur la branche en cours de développement, auquel cas une
+    #feuille est retournée avec la classe majoritaire parmi les exemples associés au noeud courant.
+    if len(codex["liste_attributs"]) == 1: # il ne reste que la classe
+        val1 = list(codex["liste_valeurs_possibles"].values())[-1][0]
+        val2 = list(codex["liste_valeurs_possibles"].values())[-1][1]
+        liste = codex["donnees"]
+
+        if occurence_val(val1,liste) > occurence_val(val2,liste):
+            return NoeudDecision(resultat=val1)
+        elif occurence_val(val1,liste) < occurence_val(val2,liste):
+            return NoeudDecision(resultat=val2)
+        else:
+            return NoeudDecision()
+
+
+    best_att = get_best_att(codex)
+    #print(f"best attribut: {best_att}")
+
+    #liste_vals_best_att = codex["all_valeurs_att_restant"][best_att] #version null
+    liste_vals_best_att = codex["liste_valeurs_possibles"][best_att]    # version pas de null 
+    
+    sous_arbre = {}
+    for val in liste_vals_best_att:
+        codex_copy = copy.deepcopy(codex)
+        #print(val)
+        sous_arbre[val] = tree_build_fct_bis(partitionner(best_att,val,codex_copy))
+        
+    return NoeudDecision(attribut=best_att, branches=sous_arbre)
+    
+def tree_build_visual(csvfile:str):
+    """
+    Retourne l'arbre créé à partir des données fournis en paramètre
+    Affiche les branches null
+    Parameters
+    ----------
+    csvfile : str
+        le nom du fichier contenant les données d'entrainement
+
+    Returns
+    -------
+    res : Arbre
+        l'arbre issu des données d'entrainement
+
+    """
+    codex = lecture(csvfile)
+
+    return tree_build_visual_bis(codex)
+    
+
+
+def tree_build_visual_bis(codex:dict):
+    """
+    Retourne l'arbre créé à partir des données fournis en paramètre
+    Affiche les branches null
 
     Parameters
     ----------
@@ -150,18 +228,17 @@ def tree_build_bis(codex:dict):
 
     best_att = get_best_att(codex)
     #print(f"best attribut: {best_att}")
-    
+
     liste_vals_best_att = codex["all_valeurs_att_restant"][best_att] #version null
-    #liste_vals_best_att = codex["liste_valeurs_possibles"][best_att]    # version pas de null (pas fonctionnelle)
+    #liste_vals_best_att = codex["liste_valeurs_possibles"][best_att]    # version pas de null 
     
     sous_arbre = {}
     for val in liste_vals_best_att:
         codex_copy = copy.deepcopy(codex)
         #print(val)
-        sous_arbre[val] = tree_build_bis(partitionner(best_att,val,codex_copy))
+        sous_arbre[val] = tree_build_visual_bis(partitionner(best_att,val,codex_copy))
         
     return NoeudDecision(attribut=best_att, branches=sous_arbre)
-    
 
 def occurrence_classe_donnees(file:str):
     """
@@ -193,7 +270,7 @@ def occurrence_classe_tree(file:str):
     res : dict
         un dictionnaire contenant les occurrences
     """
-    tree = tree_build(file)
+    tree = tree_build_fct(file)
     #print("tree: ")
     #print(tree)
     valeurs = list(occurrence_classe_donnees(file).keys())
@@ -293,8 +370,8 @@ def construire_matrice_confusion(tree:NoeudDecision, train_file:str):
     for exemple in codex["donnees"]:
         classe_reelle = exemple[-1]  # La vérité de terrain est la dernière valeur
         classe_predite = prediction(tree, exemple)  # Faire une prédiction avec l'arbre
-        print(exemple)
-        print(classe_predite)
+        #print(exemple)
+        #print(classe_predite)
         
         
         matrice_confusion[classe_reelle][classe_predite] += 1  # Mettre à jour la matrice de confusion
@@ -310,9 +387,7 @@ def construire_matrice_confusion(tree:NoeudDecision, train_file:str):
 #print(occurrence_classe_tree("donnees/golf.csv"))
 #print("pour les donnees")
 #print(occurrence_classe_donnees("donnees/golf.csv"))
-tree = tree_build("donnees/golf.csv")
-print(tree)
-#print(construire_matrice_confusion(tree,"donnees/golf.csv")) 
+
 
 #test=["rain","mild","high","false","yes"]
 #print(prediction(tree,test))
