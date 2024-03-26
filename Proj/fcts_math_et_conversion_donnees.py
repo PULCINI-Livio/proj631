@@ -58,6 +58,28 @@ def lecture(csvfile:str) -> dict:
     return codex
 
 #print(lecture("donnees/golf.csv"))
+def occurence_val(val,l:list):
+    """
+    Retourne le nombre de liste dans une liste de liste qui contiennent la valeur
+
+    Parameters
+    ----------
+    val : Any
+        la valeur dont on veut connaitre l'occurence
+    l : list
+        la liste de liste à parcourir
+    Returns
+    -------
+    res : int
+        l'occurence de val dans les listes
+    """
+    res = 0
+    # On parcours les sous-listes
+
+    for sl in l: 
+        if val in sl:
+            res += 1
+    return res
 
 def I(p:int, n:int) -> float:
     """
@@ -107,7 +129,7 @@ def pi_ni(i:int, att:str, codex:dict) -> tuple:
                 n+=1
     return (p,n)
 
-#print(pi_ni(2,'outlook',lecture("donnees/golf.csv")))
+
 
 def p_n(target_att:str, codex:dict) -> tuple:
     """
@@ -162,7 +184,6 @@ def E(A:str, codex:dict) -> float:
         res += ((tuple_pi_ni[0]+tuple_pi_ni[1])/(tuple_p_n[0]+tuple_p_n[1]))*I(tuple_pi_ni[0],tuple_pi_ni[1])
     return res
 
-#print(E("outlook",lecture("donnees/golf.csv")))
 
 
 
@@ -186,28 +207,34 @@ def gain(A:str, codex:dict) -> float:
     res = I(tuple_p_n[0],tuple_p_n[1])-E(A,codex)
     return round(res,3)
 
-def occurence_val(val,l:list):
+
+
+
+
+def IV(A:str, codex:dict) -> float:
     """
-    Retourne le nombre de liste dans une liste de liste qui contiennent la valeur
+    Renvoie le contenu de l'information de la réponse à la question "quelle est la valeur de l'attribut A ?"
 
     Parameters
     ----------
-    val : Any
-        la valeur dont on veut connaitre l'occurence
-    l : list
-        la liste de liste à parcourir
+    A : str
+        un attribut
+    codex : dict
+        le dictionnaire organisé des données
+        
     Returns
     -------
-    res : int
-        l'occurence de val dans les listes
+    float
+
     """
     res = 0
-    # On parcours les sous-listes
+    tuple_p_n = p_n(A,codex)
+    for i in range(len(codex["liste_valeurs_possibles"][A])):
+        tuple_pi_ni = pi_ni(i,A,codex)
+        res -= ((tuple_pi_ni[0]+tuple_pi_ni[1])/(tuple_p_n[0]+tuple_p_n[1]))*math.log2((tuple_pi_ni[0]+tuple_pi_ni[1])/(tuple_p_n[0]+tuple_p_n[1]))
 
-    for sl in l: 
-        if val in sl:
-            res += 1
     return res
+
 #print(gain("outlook",lecture("donnees/golf.csv")))
 #print(lecture("donnees/golf_copy.csv"))
 #print(len(lecture("donnees/golf_copy.csv")["liste_attributs"]))

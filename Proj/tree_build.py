@@ -29,7 +29,7 @@ def get_best_att(codex:dict):
 
 def partitionner(att:str, val:str, codex:dict):
     """
-    Retourne un dictionnaire contenant seulement les données contenant une certaine val d'un attribut en paramètre, 
+    Retourne un dictionnaire contenant seulement les données contenant une certaine valeur d'un attribut en paramètre, 
     retire également l'attribut et ses valeurs du dictionnaire
 
     Parameters
@@ -388,11 +388,8 @@ def construire_matrice_confusion(tree:NoeudDecision, train_file:str):
 #print("pour les donnees")
 #print(occurrence_classe_donnees("donnees/golf.csv"))
 
-
 #test=["rain","mild","high","false","yes"]
 #print(prediction(tree,test))
-
-
 
 #print(list(codex["liste_valeurs_possibles"].values())[-1][0])
 #donnees = [['Chaud', 'Haute', 'Non'], ['Chaud', 'Haute', 'Non'], ['Chaud', 'Haute', 'Non'], ['Chaud', 'Normal', 'Oui']]
@@ -402,3 +399,7 @@ def construire_matrice_confusion(tree:NoeudDecision, train_file:str):
 #print(get_best_att(lecture("donnees/golf.csv")))
 #print(partitionner("humidity",'high',lecture("donnees/golf.csv")))
 
+#Version moins visuelle n'incluant pas les branches "null"
+tree_fct = tree_build_fct("donnees/golf.csv")
+print("tree_fct")
+print(tree_fct)
