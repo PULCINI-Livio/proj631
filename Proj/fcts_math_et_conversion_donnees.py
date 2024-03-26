@@ -1,6 +1,7 @@
 import csv
 import math
 import copy
+
 def lecture(csvfile:str) -> dict:
     """
     enregistre les données de manière organisé sous forme de dictionnaire
@@ -14,7 +15,7 @@ def lecture(csvfile:str) -> dict:
     dictionnaire de la forme: {"liste_attributs":None, "liste_valeurs_possibles":{}, "donnees":[]}
 
     """
-    codex = {"liste_attributs":None, "liste_valeurs_possibles":{}, "donnees":[], "all_valeurs_att_restant":{}}
+    codex = {"liste_attributs":None, "liste_valeurs_possibles":{}, "donnees":[], "all_valeurs_att_restant":{}, "occurrence":{}}
 
     #extraction csv dans tableau
     csv_to_list = [] #tableau de tableaux
@@ -50,7 +51,10 @@ def lecture(csvfile:str) -> dict:
             codex["liste_valeurs_possibles"][att] = liste_sans_doublons
             codex["donnees"] = csv_to_list_sans_header
     codex["all_valeurs_att_restant"] = copy.deepcopy(codex["liste_valeurs_possibles"])
-    
+
+    for val_class in list(codex["liste_valeurs_possibles"].values())[-1]:
+        codex["occurrence"][val_class] = occurence_val(val_class,copy.deepcopy(codex["donnees"]))
+
     return codex
 
 #print(lecture("donnees/golf.csv"))
@@ -182,6 +186,28 @@ def gain(A:str, codex:dict) -> float:
     res = I(tuple_p_n[0],tuple_p_n[1])-E(A,codex)
     return round(res,3)
 
+def occurence_val(val,l:list):
+    """
+    Retourne le nombre de liste dans une liste de liste qui contiennent la valeur
+
+    Parameters
+    ----------
+    val : Any
+        la valeur dont on veut connaitre l'occurence
+    l : list
+        la liste de liste à parcourir
+    Returns
+    -------
+    res : int
+        l'occurence de val dans les listes
+    """
+    res = 0
+    # On parcours les sous-listes
+
+    for sl in l: 
+        if val in sl:
+            res += 1
+    return res
 #print(gain("outlook",lecture("donnees/golf.csv")))
 #print(lecture("donnees/golf_copy.csv"))
 #print(len(lecture("donnees/golf_copy.csv")["liste_attributs"]))

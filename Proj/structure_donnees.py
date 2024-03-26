@@ -20,7 +20,7 @@ class NoeudDecision:
         self.attribut = attribut  # Attribut sur lequel se fait la division
         self.valeur = valeur  # Valeur de l'attribut pour cette division
         self.branches = branches if branches is not None else {}  # Sous-arbres pour chaque valeur de l'attribut
-        self.resultat = resultat  # Résultat (étiquette de classe) pour ce nœud s'il est une feuille
+        self.resultat = resultat  # Résultat (étiquette de classe) pour ce noeud s'il est une feuille
 
     def __str__(self, niveau=0):
         # Construire la chaîne de caractères pour ce nœud
@@ -36,4 +36,7 @@ class NoeudDecision:
             representation += enfant.__str__(niveau + 2)  # Appel récursif pour l'enfant
 
         return representation
+    
+ 
+    
     

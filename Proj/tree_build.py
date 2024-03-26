@@ -47,7 +47,7 @@ def partitionner(att:str, val:str, codex:dict):
         un nouveau dictionnaire organisé selon un attribut
 
     """
-    print(codex)
+    #print(codex)
     #print(codex)
 
     #Traitement clé liste_attribut
@@ -86,34 +86,6 @@ def partitionner(att:str, val:str, codex:dict):
     #print(f"codex après partition :{codex}")
     return codex
             
-
-def occurence_val(val,l:list):
-    """
-    Retourne le nombre de liste dans une liste de liste qui contiennent la valeur
-
-    Parameters
-    ----------
-    val : Any
-        la valeur dont on veut connaitre l'occurence
-    l : list
-        la liste de liste à parcourir
-    Returns
-    -------
-    res : int
-        l'occurence de val dans les listes
-
-    """
-    res = 0
-    # On parcours les sous-listes
-
-    for sl in l: 
-        if val in sl:
-            res += 1
-    return res
-
-
-
-
 
 def tree_build(csvfile:str):
     """
@@ -155,7 +127,6 @@ def tree_build_bis(codex:dict):
     #Condition d'arret 1: L’ensemble d’exemples associés au noeud courant est vide.
     
     if codex["donnees"] == []: 
-        print(1111111111)
         return NoeudDecision(resultat="null")
 
     #Condition d'arret 2: Tous les exemples d’apprentissage associés au noeud courant ont la même valeur de classe,
@@ -165,7 +136,7 @@ def tree_build_bis(codex:dict):
     
     #Condition d'arret 3: Tous les attributs ont été utilisés sur la branche en cours de développement, auquel cas une
     #feuille est retournée avec la classe majoritaire parmi les exemples associés au noeud courant.
-    if len(codex["liste_attributs"]) == 1:
+    if len(codex["liste_attributs"]) == 1: # il ne reste que la classe
         val1 = list(codex["liste_valeurs_possibles"].values())[-1][0]
         val2 = list(codex["liste_valeurs_possibles"].values())[-1][1]
         liste = codex["donnees"]
@@ -179,33 +150,180 @@ def tree_build_bis(codex:dict):
 
     best_att = get_best_att(codex)
     #print(f"best attribut: {best_att}")
-    print("best attribut :" + best_att)
-    liste_vals_best_att = codex["all_valeurs_att_restant"][best_att]
+    
+    liste_vals_best_att = codex["all_valeurs_att_restant"][best_att] #version null
+    #liste_vals_best_att = codex["liste_valeurs_possibles"][best_att]    # version pas de null (pas fonctionnelle)
     
     sous_arbre = {}
     for val in liste_vals_best_att:
         codex_copy = copy.deepcopy(codex)
-        print(val)
+        #print(val)
         sous_arbre[val] = tree_build_bis(partitionner(best_att,val,codex_copy))
         
     return NoeudDecision(attribut=best_att, branches=sous_arbre)
     
 
+def occurrence_classe_donnees(file:str):
+    """
+    renvoie le nombre d'occurrence des deux valeurs de classe pour un jeu de données
 
-#codex = lecture("donnees/golf_copy.csv")
-#print(list(codex["liste_valeurs_possibles"].values())[-1][0])
+    Parameters
+    ----------
+    file : str
+        le nom du fichier contenant les données d'entrainement
+
+    Returns
+    -------
+    res : dict
+        un dictionnaire contenant les occurrences
+    """
+    return lecture(file)["occurrence"]
+
+def occurrence_classe_tree(file:str):
+    """
+    renvoie le nombre d'occurrence des deux valeurs de classe pour un arbre de décision
+
+    Parameters
+    ----------
+    file : str
+        le nom du fichier contenant les données d'entrainement
+
+    Returns
+    -------
+    res : dict
+        un dictionnaire contenant les occurrences
+    """
+    tree = tree_build(file)
+    #print("tree: ")
+    #print(tree)
+    valeurs = list(occurrence_classe_donnees(file).keys())
+    res = {}
+    for val in valeurs:
+        res[val] = occurrence_tree_bis(tree,val)
+    return res
+
+def occurrence_tree_bis(tree:NoeudDecision,val:str):
+    """
+    renvoie le nombre d'occurrence d'une valeur de classe pour un arbre de décision
+
+    Parameters
+    ----------
+    tree : NoeudDecision
+        l'arbre à parcourir
+
+    Returns
+    -------
+    res : int
+        l'occurrence de la valeur dans l'arbre
+    """
+    #print(type(tree))
+    #print("LE TREE")
+    #print(tree)
+    if tree.resultat != None:#si on arrive à une feuille
+        if tree.resultat == val:
+            return 1
+        else:
+            return 0
+    res = 0
+   
+    for branche in tree.branches:
+        res += occurrence_tree_bis(tree.branches[branche],val)
+    
+    return res
 
 
+
+
+def prediction(tree:NoeudDecision,exemple:list):
+    """
+    renvoie le nombre d'occurrence des deux valeurs de classe pour un arbre de décision
+
+    Parameters
+    ----------
+    tree : NoeudDecision
+        l'arbre à parcourir
+    donnee : list
+        une liste d'un exemple à prédire
+    Returns
+    -------
+    res : any
+        la classe issu de la prédiction
+    """
+    res = "Valeur par défaut"
+    if tree.resultat != None: #Si on arrive à une feuille
+        return tree.resultat
+    for branche in tree.branches:
+        if branche in exemple:
+            res = prediction(tree.branches[branche],exemple)
+    return res
+
+
+def construire_matrice_confusion(tree:NoeudDecision, train_file:str):
+    """
+    Renvoie une matrice de confusion à partir de l'arbre et des donnees d'entrainement
+
+    Parameters
+    ----------
+    tree : NoeudDecision
+        l'arbre à parcourir
+    train_file : str
+        le nom du fichier contenant les données d'entrainement
+
+    Returns
+    -------
+    res : int
+        l'occurrence de la valeur dans l'arbre
+    """
+    matrice_confusion = {}
+    classes = set()  # Ensemble des classes possibles
+    codex = lecture(train_file)
+    
+    # Récupérer les classes possibles à partir des données d'entraînement
+    for exemple in codex["donnees"]:
+        classes.add(exemple[-1])  # La classe est la dernière valeur de chaque exemple
+    
+    # Initialiser la matrice de confusion avec des comptes à zéro
+    for classe_reelle in classes:
+        matrice_confusion[classe_reelle] = {}
+        for classe_predite in classes:
+            matrice_confusion[classe_reelle][classe_predite] = 0
+    
+    # Effectuer les prédictions pour chaque exemple dans les données d'entraînement
+    
+    for exemple in codex["donnees"]:
+        classe_reelle = exemple[-1]  # La vérité de terrain est la dernière valeur
+        classe_predite = prediction(tree, exemple)  # Faire une prédiction avec l'arbre
+        print(exemple)
+        print(classe_predite)
+        
+        
+        matrice_confusion[classe_reelle][classe_predite] += 1  # Mettre à jour la matrice de confusion
+    
+    return matrice_confusion
 
 #-------------------------------#
 #-------------TEST--------------#
 #-------------------------------#
+
+#print(occurrence_classe_donnees("donnees/golf.csv"))
+#print("pour l'arbre")
+#print(occurrence_classe_tree("donnees/golf.csv"))
+#print("pour les donnees")
+#print(occurrence_classe_donnees("donnees/golf.csv"))
+tree = tree_build("donnees/golf.csv")
+print(tree)
+#print(construire_matrice_confusion(tree,"donnees/golf.csv")) 
+
+#test=["rain","mild","high","false","yes"]
+#print(prediction(tree,test))
+
+
+
+#print(list(codex["liste_valeurs_possibles"].values())[-1][0])
 #donnees = [['Chaud', 'Haute', 'Non'], ['Chaud', 'Haute', 'Non'], ['Chaud', 'Haute', 'Non'], ['Chaud', 'Normal', 'Oui']]
 #print(occurence_val('Chaud',donnees))
 #codex = {'liste_attributs': ['Temperature', 'Humidite', 'Jouer au tennis'], 'liste_valeurs_possibles': {'Jouer au tennis': ['Non', 'Oui']}, 'donnees': [['Chaud', 'Haute', 'Non'], ['Chaud', 'Haute', 'Non'], ['Chaud', 'Haute', 'Non'], ['Chaud', 'Normal', 'Oui']]}
 #print(list(codex["liste_valeurs_possibles"].values())[-1])
-
-print(tree_build("donnees/golf.csv"))
-
 #print(get_best_att(lecture("donnees/golf.csv")))
 #print(partitionner("humidity",'high',lecture("donnees/golf.csv")))
+
