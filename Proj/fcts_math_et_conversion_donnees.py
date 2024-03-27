@@ -93,7 +93,7 @@ def I(p:int, n:int) -> float:
     if n==0 or p==0:
         return 0
     else:
-        return -(p/(p+n))*(math.log2((p/(p+n))))-(n/(n+p))*(math.log2((n/(n+p))))
+        return -(p/(p+n))*(math.log2((p/(p+n))))-(n/(p+n))*(math.log2((n/(p+n))))
 
 
 def pi_ni(i:int, att:str, codex:dict) -> tuple:
@@ -203,10 +203,11 @@ def gain(A:str, codex:dict) -> float:
     float
 
     """
-    tuple_p_n = p_n(A,codex)
+    target = list(codex["liste_valeurs_possibles"].keys())[-1] # Ex: 'play'
+    tuple_p_n = p_n(target,codex)
+    
     res = I(tuple_p_n[0],tuple_p_n[1])-E(A,codex)
     return round(res,3)
-
 
 
 
@@ -235,6 +236,43 @@ def IV(A:str, codex:dict) -> float:
 
     return res
 
+
+def gain_ratio(A:str, codex:dict) -> float:
+    """
+    Renvoie le ratio de gain pour un attribut
+
+    Parameters
+    ----------
+    A : str
+        un attribut
+    codex : dict
+        le dictionnaire organisé des données
+        
+    Returns
+    -------
+    float
+
+    """
+    res = gain(A,codex)/IV(A,codex)
+    return round(res,3)
+
+codex = lecture("donnees/golf.csv")
+
+
+
+"""
+print(codex)
+print(gain("wind",codex))
+print("outlook")
+print(gain("outlook",codex))
+print("temp")
+print(gain("temp",codex))
+print("humidity")
+print(gain("humidity",codex))
+print("wind")
+print(gain("wind",codex))
+"""
+print(gain_ratio("humidity",codex))
 #print(gain("outlook",lecture("donnees/golf.csv")))
 #print(lecture("donnees/golf_copy.csv"))
 #print(len(lecture("donnees/golf_copy.csv")["liste_attributs"]))
