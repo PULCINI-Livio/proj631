@@ -77,16 +77,16 @@ def get_best_att_gini(codex:dict):
             indice_gini += gini(partitionner(att,val,codex_copy))
         #on fait la moyenne des indices de chaque valeur de l'attribut
         dict_moy[att] = indice_gini/len(codex["liste_valeurs_possibles"][att])
-    print("dict moy ")
-    print(dict_moy)
+    #print("dict moy ")
+    #print(dict_moy)
 
     #on cherche la plus faible moyenne
     best_att = list_att[0] 
     for att in list_att[:-1]:
         if dict_moy[att] < dict_moy[best_att]:
             best_att = att
-    print("gini best att:")
-    print(best_att)
+    #print("gini best att:")
+    #print(best_att)
     return best_att
 
 def get_best_att_FINAL(codex:dict, method:str="gain"):
@@ -108,16 +108,16 @@ def get_best_att_FINAL(codex:dict, method:str="gain"):
         l'attribut au gain le plus élevé
 
     """
-    print("la methode demandé c'est :"+method)
+    #print("la methode demandé c'est :"+method)
     match method:
         case "gain":
-            print("methode gain choisi")
+            #print("methode gain choisi")
             return get_best_att_gain(codex)
         case "gain ratio":
-            print("methode gain ratio choisi")
+            #print("methode gain ratio choisi")
             return get_best_att_gr(codex)
         case "gini":
-            print("methode gini choisi")
+            #print("methode gini choisi")
             return get_best_att_gini(codex)
         case _:
             raise ValueError('Wrong methode selected')
@@ -255,7 +255,7 @@ def tree_build_fct_bis(codex:dict,method:str="gain"):
 
 
     best_att = get_best_att_FINAL(codex,method)
-    print(f"best attribut: {best_att}")
+    #print(f"best attribut: {best_att}")
 
     #liste_vals_best_att = codex["all_valeurs_att_restant"][best_att] #version null
     liste_vals_best_att = codex["liste_valeurs_possibles"][best_att]    # version pas de null 
