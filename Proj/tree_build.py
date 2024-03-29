@@ -1,10 +1,9 @@
 from fcts_math_et_conversion_donnees import *
 from structure_donnees import *
 
-
-def get_best_att(codex:dict):
+def get_best_att_gain(codex:dict):
     """
-    Retourne l'attribut ayant le meilleur gain
+    Retourne l'attribut ayant le meilleur gain avec la méthode gain
 
     Parameters
     ----------
@@ -26,6 +25,103 @@ def get_best_att(codex:dict):
         raise ValueError("Pas de meilleur attribut")
     else:
         return best
+
+def get_best_att_gr(codex:dict):
+    """
+    Retourne l'attribut ayant le meilleur gain avec la méthode gain ratio
+
+    Parameters
+    ----------
+    codex : dict
+        le dictionnaire organisé des données
+
+    Returns
+    -------
+    best : str
+        l'attribut au gain le plus élevé
+
+    """
+    list_att = codex["liste_attributs"]
+    best = list_att[0]
+    for att in list_att[1:-1]:
+        if (gain_ratio(att,codex)) > gain_ratio(best,codex):
+            best = att
+    if best == -1:
+        raise ValueError("Pas de meilleur attribut")
+    else:
+        return best
+
+
+def get_best_att_gini(codex:dict):
+    """
+    Retourne le 'meilleur' attribut càd celui ayant l'indice de gini le plus faible
+
+    Parameters
+    ----------
+    codex : dict
+        le dictionnaire organisé des données
+
+    Returns
+    -------
+    best : str
+        l'attribut au gain le plus élevé
+
+    """
+    list_att = codex["liste_attributs"]
+    res = ""
+    dict_moy = {}
+    for att in list_att[:-1]:
+        indice_gini = 0
+        for val in codex["liste_valeurs_possibles"][att]:
+            codex_copy = copy.deepcopy(codex)
+            indice_gini += gini(partitionner(att,val,codex_copy))
+        #on fait la moyenne des indices de chaque valeur de l'attribut
+        dict_moy[att] = indice_gini/len(codex["liste_valeurs_possibles"][att])
+    print("dict moy ")
+    print(dict_moy)
+
+    #on cherche la plus faible moyenne
+    best_att = list_att[0] 
+    for att in list_att[:-1]:
+        if dict_moy[att] < dict_moy[best_att]:
+            best_att = att
+    print("gini best att:")
+    print(best_att)
+    return best_att
+
+def get_best_att_FINAL(codex:dict, method:str="gain"):
+    """
+    Retourne le 'meilleur' attribut selon la méthode précisé
+
+    Parameters
+    ----------
+    codex : dict
+        le dictionnaire organisé des données
+    method : str
+        la méthode d'évaluation :
+            "gain"
+            | "gain ratio"
+            | "gini"
+    Returns
+    -------
+    best : str
+        l'attribut au gain le plus élevé
+
+    """
+    print("la methode demandé c'est :"+method)
+    match method:
+        case "gain":
+            print("methode gain choisi")
+            return get_best_att_gain(codex)
+        case "gain ratio":
+            print("methode gain ratio choisi")
+            return get_best_att_gr(codex)
+        case "gini":
+            print("methode gini choisi")
+            return get_best_att_gini(codex)
+        case _:
+            raise ValueError('Wrong methode selected')
+
 
 def partitionner(att:str, val:str, codex:dict):
     """
@@ -87,7 +183,7 @@ def partitionner(att:str, val:str, codex:dict):
     return codex
             
 
-def tree_build_fct(csvfile:str):
+def tree_build_fct(csvfile:str,method:str="gain"):
     """
     Retourne l'arbre créé à partir des données fournis en paramètre
     N'affiche pas les branches null
@@ -95,7 +191,11 @@ def tree_build_fct(csvfile:str):
     ----------
     csvfile : str
         le nom du fichier contenant les données d'entrainement
-
+    method : str
+        la méthode d'évaluation des attributs:
+            "gain"
+            | "gain ratio"
+            | "gini"
     Returns
     -------
     res : Arbre
@@ -104,11 +204,11 @@ def tree_build_fct(csvfile:str):
     """
     codex = lecture(csvfile)
 
-    return tree_build_fct_bis(codex)
+    return tree_build_fct_bis(codex,method)
     
 
 
-def tree_build_fct_bis(codex:dict):
+def tree_build_fct_bis(codex:dict,method:str="gain"):
     """
     Retourne l'arbre créé à partir des données fournis en paramètre
     N'affiche pas les branches null
@@ -117,7 +217,11 @@ def tree_build_fct_bis(codex:dict):
     ----------
     codex : dict
         le dictionnaire contenant les données organisées
-
+    method : str
+        la méthode d'évaluation des attributs:
+            "gain"
+            | "gain ratio"
+            | "gini"
     Returns
     -------
     res : Arbre
@@ -150,8 +254,8 @@ def tree_build_fct_bis(codex:dict):
             return NoeudDecision()
 
 
-    best_att = get_best_att(codex)
-    #print(f"best attribut: {best_att}")
+    best_att = get_best_att_FINAL(codex,method)
+    print(f"best attribut: {best_att}")
 
     #liste_vals_best_att = codex["all_valeurs_att_restant"][best_att] #version null
     liste_vals_best_att = codex["liste_valeurs_possibles"][best_att]    # version pas de null 
@@ -159,12 +263,12 @@ def tree_build_fct_bis(codex:dict):
     sous_arbre = {}
     for val in liste_vals_best_att:
         codex_copy = copy.deepcopy(codex)
-        #print(val)
-        sous_arbre[val] = tree_build_fct_bis(partitionner(best_att,val,codex_copy))
+        
+        sous_arbre[val] = tree_build_fct_bis(partitionner(best_att,val,codex_copy),method)
         
     return NoeudDecision(attribut=best_att, branches=sous_arbre)
     
-def tree_build_visual(csvfile:str):
+def tree_build_visual(csvfile:str,method:str="gain"):
     """
     Retourne l'arbre créé à partir des données fournis en paramètre
     Affiche les branches null
@@ -172,7 +276,11 @@ def tree_build_visual(csvfile:str):
     ----------
     csvfile : str
         le nom du fichier contenant les données d'entrainement
-
+    method : str
+        la méthode d'évaluation des attributs:
+            "gain"
+            | "gain ratio"
+            | "gini"
     Returns
     -------
     res : Arbre
@@ -185,7 +293,7 @@ def tree_build_visual(csvfile:str):
     
 
 
-def tree_build_visual_bis(codex:dict):
+def tree_build_visual_bis(codex:dict,method:str="gain"):
     """
     Retourne l'arbre créé à partir des données fournis en paramètre
     Affiche les branches null
@@ -194,7 +302,11 @@ def tree_build_visual_bis(codex:dict):
     ----------
     codex : dict
         le dictionnaire contenant les données organisées
-
+    method : str
+        la méthode d'évaluation des attributs:
+            "gain"
+            | "gain ratio"
+            | "gini"
     Returns
     -------
     res : Arbre
@@ -226,7 +338,7 @@ def tree_build_visual_bis(codex:dict):
             return NoeudDecision()
 
 
-    best_att = get_best_att(codex)
+    best_att = get_best_att_FINAL(codex,method)
     #print(f"best attribut: {best_att}")
 
     liste_vals_best_att = codex["all_valeurs_att_restant"][best_att] #version null
@@ -235,8 +347,7 @@ def tree_build_visual_bis(codex:dict):
     sous_arbre = {}
     for val in liste_vals_best_att:
         codex_copy = copy.deepcopy(codex)
-        #print(val)
-        sous_arbre[val] = tree_build_visual_bis(partitionner(best_att,val,codex_copy))
+        sous_arbre[val] = tree_build_visual_bis(partitionner(best_att,val,codex_copy),method)
         
     return NoeudDecision(attribut=best_att, branches=sous_arbre)
 
@@ -396,10 +507,10 @@ def construire_matrice_confusion(tree:NoeudDecision, train_file:str):
 #print(occurence_val('Chaud',donnees))
 #codex = {'liste_attributs': ['Temperature', 'Humidite', 'Jouer au tennis'], 'liste_valeurs_possibles': {'Jouer au tennis': ['Non', 'Oui']}, 'donnees': [['Chaud', 'Haute', 'Non'], ['Chaud', 'Haute', 'Non'], ['Chaud', 'Haute', 'Non'], ['Chaud', 'Normal', 'Oui']]}
 #print(list(codex["liste_valeurs_possibles"].values())[-1])
-#print(get_best_att(lecture("donnees/golf.csv")))
+#print(get_best_att_gain(lecture("donnees/golf.csv")))
 #print(partitionner("humidity",'high',lecture("donnees/golf.csv")))
 
 #Version moins visuelle n'incluant pas les branches "null"
-tree_fct = tree_build_fct("donnees/golf.csv")
+"""tree_fct = tree_build_fct("donnees/golf.csv")
 print("tree_fct")
-print(tree_fct)
+print(tree_fct)"""

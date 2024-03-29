@@ -81,6 +81,7 @@ def occurence_val(val,l:list):
             res += 1
     return res
 
+
 def I(p:int, n:int) -> float:
     """
     summary
@@ -130,7 +131,6 @@ def pi_ni(i:int, att:str, codex:dict) -> tuple:
     return (p,n)
 
 
-
 def p_n(target_att:str, codex:dict) -> tuple:
     """
     Retourne p (i.e n) le nombre de fois qu'apparait la première (i.e seconde) valeur
@@ -160,7 +160,6 @@ def p_n(target_att:str, codex:dict) -> tuple:
     return (p,n)
 
 
-
 def E(A:str, codex:dict) -> float:
     """
     Calcul une moyenne pondérée
@@ -185,8 +184,6 @@ def E(A:str, codex:dict) -> float:
     return res
 
 
-
-
 def gain(A:str, codex:dict) -> float:
     """
     Calcul le gain d'un attribut
@@ -208,8 +205,6 @@ def gain(A:str, codex:dict) -> float:
     
     res = I(tuple_p_n[0],tuple_p_n[1])-E(A,codex)
     return round(res,3)
-
-
 
 
 def IV(A:str, codex:dict) -> float:
@@ -256,9 +251,34 @@ def gain_ratio(A:str, codex:dict) -> float:
     res = gain(A,codex)/IV(A,codex)
     return round(res,3)
 
-codex = lecture("donnees/golf.csv")
+
+def gini(codex:dict) -> float:
+    """
+    Calcul l'indice de gini d'un ensemble de données 
+
+    Parameters
+    ----------
+    codex : dict
+        le dictionnaire organisé des données
+
+    Returns
+    -------
+    float
+
+    """
+    res = 0
+    classe = list(codex["liste_valeurs_possibles"].keys())[-1]
+    for i in range(len(codex["liste_valeurs_possibles"][classe])):
+        codex_copy = copy.deepcopy(codex)
+        #print(codex_copy["donnees"])
+        pi = occurence_val(codex_copy["liste_valeurs_possibles"][classe][i],codex_copy["donnees"])/len(codex_copy["donnees"])
+        res += pi**2
+
+    return 1-res
 
 
+#codex = lecture("donnees/golf.csv")
+#print(gini(codex))
 
 """
 print(codex)
@@ -272,7 +292,7 @@ print(gain("humidity",codex))
 print("wind")
 print(gain("wind",codex))
 """
-print(gain_ratio("humidity",codex))
+#print(gain_ratio("humidity",codex))
 #print(gain("outlook",lecture("donnees/golf.csv")))
 #print(lecture("donnees/golf_copy.csv"))
 #print(len(lecture("donnees/golf_copy.csv")["liste_attributs"]))
