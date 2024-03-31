@@ -227,12 +227,107 @@ def IV(A:str, codex:dict) -> float:
     tuple_p_n = p_n(A,codex)
     for i in range(len(codex["liste_valeurs_possibles"][A])):
         tuple_pi_ni = pi_ni(i,A,codex)
+        
         res -= ((tuple_pi_ni[0]+tuple_pi_ni[1])/(tuple_p_n[0]+tuple_p_n[1]))*math.log2((tuple_pi_ni[0]+tuple_pi_ni[1])/(tuple_p_n[0]+tuple_p_n[1]))
 
     return res
 
+def est_continue(A, codex):
+    """Vérifie que l'att contient des valeurs continues
+    
+    Parameters
+    ----------
+    A : str
+        un attribut
+    codex : dict
+        le dictionnaire organisé des données
+        
+    Returns
+    -------
+    boolean
+    """
+    pass
+
+def get_dico_continu(A,codex):
+    """Retourne un dictionnaire qui contient les valeurs continue de A rangé par ordre croissant 
+        avec comme clé la classe associé
+    
+    Parameters
+    ----------
+    A : str
+        un attribut
+    codex : dict
+        le dictionnaire organisé des données
+        
+    Returns
+    -------
+    dict
+    """
+    
+    pass
+
+def get_list_cut(dico):
+    """Retourne une liste de tuple qui contient les valeurs entre lesquelles on effectue une coupe
+    
+    Parameters
+    ----------
+    dico : dict
+        le dictionnaire classe:valeur_continue
+        
+    Returns
+    -------
+    list of tuple
+    """
+    pass
+
+def get_median_list(tuple_list):
+    """Retourne une liste de médiane pour chaque tuple
+    
+    Parameters
+    ----------
+    tuple_list : list of tuple
+        une liste de tuple qui contient les valeurs entre lesquelles on cherche la médiane
+        
+    Returns
+    -------
+    list 
+    """
+    pass
+
+def get_best_median_gain(median_list):
+    """Retourne le gain de la médiane ayant le plus grand gain
+    
+    Parameters
+    ----------
+    median_list : list 
+        une liste de médianes
+        
+    Returns
+    -------
+    float 
+    """
+    pass
 
 def gain_ratio(A:str, codex:dict) -> float:
+    """Renvoie le ratio de gain pour un attribut
+
+    Parameters
+    ----------
+    A : str
+        un attribut
+    codex : dict
+        le dictionnaire organisé des données
+        
+    Returns
+    -------
+    float
+
+    """
+
+    res = gain(A,codex)/IV(A,codex)
+    return round(res,3)
+
+def gain_ratio_continu(A:str, codex:dict) -> float:
     """
     Renvoie le ratio de gain pour un attribut
 
@@ -248,8 +343,16 @@ def gain_ratio(A:str, codex:dict) -> float:
     float
 
     """
-    res = gain(A,codex)/IV(A,codex)
-    return round(res,3)
+
+    if est_continue(A,codex):
+        dico = get_dico_continu(A,codex)
+        list_cut = get_list_cut(dico)
+        median_list = get_median_list(list_cut)
+        best_median_gain = get_best_median_gain(median_list)
+
+    else:
+        res = gain(A,codex)/IV(A,codex)
+        return round(res,3)
 
 
 def gini(codex:dict) -> float:

@@ -1,6 +1,8 @@
 from fcts_math_et_conversion_donnees import *
 from structure_donnees import *
 
+
+
 def get_best_att_gain(codex:dict):
     """
     Retourne l'attribut ayant le meilleur gain avec la méthode gain
@@ -44,12 +46,40 @@ def get_best_att_gr(codex:dict):
     list_att = codex["liste_attributs"]
     best = list_att[0]
     for att in list_att[1:-1]:
+        
         if (gain_ratio(att,codex)) > gain_ratio(best,codex):
             best = att
     if best == -1:
         raise ValueError("Pas de meilleur attribut")
     else:
         return best
+    
+def get_best_att_gr(codex:dict):
+    """
+    Retourne l'attribut ayant le meilleur gain avec la méthode gain ratio
+
+    Parameters
+    ----------
+    codex : dict
+        le dictionnaire organisé des données
+
+    Returns
+    -------
+    best : str
+        l'attribut au gain le plus élevé
+
+    """
+    list_att = codex["liste_attributs"]
+
+    best = list_att[0]
+    for att in list_att[1:-1]:
+        if (gain_ratio(att,codex)) > gain_ratio(best,codex):
+            best = att
+    if best == -1:
+        raise ValueError("Pas de meilleur attribut")
+    else:
+        return best
+
 
 
 def get_best_att_gini(codex:dict):
@@ -419,9 +449,6 @@ def occurrence_tree_bis(tree:NoeudDecision,val:str):
     
     return res
 
-
-
-
 def prediction(tree:NoeudDecision,exemple:list):
     """
     renvoie le nombre d'occurrence des deux valeurs de classe pour un arbre de décision
@@ -445,10 +472,8 @@ def prediction(tree:NoeudDecision,exemple:list):
             res = prediction(tree.branches[branche],exemple)
     return res
 
-
 def construire_matrice_confusion(tree:NoeudDecision, train_file:str):
-    """
-    Renvoie une matrice de confusion à partir de l'arbre et des donnees d'entrainement
+    """Renvoie une matrice de confusion à partir de l'arbre et des donnees d'entrainement
 
     Parameters
     ----------
@@ -489,6 +514,49 @@ def construire_matrice_confusion(tree:NoeudDecision, train_file:str):
     
     return matrice_confusion
 
+def post_elagage(tree:NoeudDecision, codex):
+    """Renvoie un arbre élagué en remplacant les noeuds par la valeur dominante
+
+    Ici on ommet l'évaluation de la performance après élagage
+
+    Parameters
+    ----------
+    tree : NoeudDecision
+        l'arbre à parcourir
+    codex : dict
+        le dictionnaire contenant les données organisées
+
+    Returns
+    -------
+    res : NoeudDecision
+        l'arbre élagué
+    """
+
+    for branche in tree.branches:
+        full_feuille = True
+        for sous_branche in tree.branches[branche].branches:
+            if sous_branche[branche].resultat != None:
+                full_feuille = False
+        if not full_feuille: #Si on arrive pas à des feuilles pour toutes les branches du sous arbre
+            post_elagage(sous_branche[branche],codex)
+        else:
+            if len(list(tree.branches[branche].branches)) != 2: #on ne fait rien si binaire
+                occur = {}
+                for classe in list(codex["liste_valeurs_possibles"].values())[-1]:
+                    occur[classe] = 0
+                for cle in tree.branches[branche].branches:
+                    occur[tree.branches[branche].branches[cle].resultat] += 1
+                list_occur = list(occur)
+                predominant = list_occur[0][0]
+                for cle_occur in list_occur:
+                    if cle_occur[1] > occur[predominant]:
+                        predominant = cle_occur[0]
+                tree.branches[branche].attribut = None
+                tree.branches[branche].valeur = None
+                tree.branches[branche].branches = None
+                tree.branches[branche].resultat = predominant
+                
+            
 #-------------------------------#
 #-------------TEST--------------#
 #-------------------------------#
