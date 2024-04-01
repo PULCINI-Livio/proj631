@@ -22,8 +22,14 @@ import copy
 
 ## INSTALLATION
 
+Je le précise au cas où, vous devez avoir Python installé sur votre machine pour faire fonctionner ce programme.  
 En respectant la structure des dossiers, télécharger le contenu de [Proj](Proj) pour avoir les fonctions et de [donnees](donnees) pour connaitre la forme des données d'entrainement.  
-Vous n'avez besoin que de manipuler le fichier [zone_test.py](Proj/zone_test.py) en "commentant"/"décommentant" les lignes qui vous intéresse. En lisant la documentation de la fonction ```tree_build_fct()```, vous verrez que le deuxième paramètre défini la méthode d'évaluation/choix des attributs: ```"gain"```,```"gain ratio"``` ou ```"gini"```
+Vous n'avez besoin que de manipuler le fichier [zone_test.py](Proj/zone_test.py) en "commentant"/"décommentant" les lignes qui vous intéresse. En lisant la documentation de la fonction ```tree_build_fct()```, vous verrez que le deuxième paramètre défini la méthode d'évaluation/choix des attributs: ```"gain"```,```"gain ratio"``` ou ```"gini"```.  
+La matrice de confusion permet de voir le nombre de fois où les prédictions correspondent ou non. Cela a peut d'intérêts quoi on utilise la fonction ```construire_matrice_confusion()``` sur les mêmes données que lors de la création de l'arbre. Vous pouvez par exemple utiliser ```tree_build_fct()``` sur le fichier [golf_app.csv](donnees/golf_app.csv) et ```construire_matrice_confusion()``` sur le fichier [golf_pred.csv](donnees/golf_pred.csv) pour voir l'efficacité de votre arbre.  
+Attention à la forme de vos données d'entrainement; le programme ne prend pas encore en compte les données à valeur manquantes, et pas les valeurs continues de manière optimisée (mais vous pouvez toujours essayer cette dernière pour visualiser votre arbre).  
+
+L'affichage des résultats se fait dans le terminal/console de l'application (une version plus visuelle est en cours de développement).  
+Vous pouvez donc créer votre propre arbre avec vos propres données d'entrainement.
 
 
 
