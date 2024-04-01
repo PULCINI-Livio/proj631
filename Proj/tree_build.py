@@ -564,7 +564,7 @@ def post_elagage(tree:NoeudDecision, codex):
 print("tree_fct")
 print(tree_fct)"""
 
-codex = lecture("donnees/golf.csv")
+"""codex = lecture("donnees/golf.csv")
 print("codex")
 print(codex)
 
@@ -572,4 +572,4 @@ tree_fct_gain = tree_build_fct("donnees/golf.csv","gain")
 print("tree_fct gain:\n")
 #print(tree_fct_gain)
 
-print(post_elagage(tree_fct_gain, codex))
+print(post_elagage(tree_fct_gain, codex))"""
