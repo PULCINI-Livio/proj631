@@ -8,7 +8,7 @@ Voir [Sujet_Id3.pdf](Sujet_Id3.pdf) pour le sujet complet.
 
 ## ASPECT TECHNIQUE
 Le programme se décompose en plusieurs parties:   
-    - [fcts_math_et_conversion_donnees.py](Proj/fcts_math_et_conversion_donnees.py) qui contient principalement les fonctions mathématiques trouvées dans l'article de référence[Quinlan1986_Article_InductionOfDecisionTrees.pdf](Quinlan1986_Article_InductionOfDecisionTrees.pdf). Donc des fonctions qui vont surtout servir pour d'autres fonctions.   
+    - [fcts_math_et_conversion_donnees.py](Proj/fcts_math_et_conversion_donnees.py) qui contient principalement les fonctions mathématiques trouvées dans l'article de référence [Quinlan1986_Article_InductionOfDecisionTrees.pdf](Quinlan1986_Article_InductionOfDecisionTrees.pdf). Donc des fonctions qui vont surtout servir pour d'autres fonctions.   
     - [structure_donnees.py](Proj/structure_donnees.py) qui contient la classe NoeudDecision ainsi que ses méthodes qui représente l'arbre.   
     - [tree_build.py](Proj/tree_build.py) qui contient les fonctions de construction de l'arbre, de prédiction, de génération de la matrices ainsi que des fonctions en cours de développement comme celle du post-élagage de l'arbre. La plupart de ces fonctions sont récursives.  
     - [zone_test.py](Proj/zone_test.py) permet de générer des arbres avec différentes méthodes d'évaluation, des dictionnaires, des matrices de confusion, etc...   
