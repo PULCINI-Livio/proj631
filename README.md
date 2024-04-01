@@ -3,7 +3,7 @@
 L'objectif de ce projet est de se familiariser avec la notion d'arbre de décision.
 J'ai donc créé un programme pour m'aider dans cette tâche
 
-Voir [Sujet Id3.pdf](Sujet Id3.pdf) pour le sujet complet.
+Voir [Sujet_Id3.pdf](Sujet_Id3.pdf) pour le sujet complet.
 
 Le programme se décompose en plusieurs parties:   
     - [fcts_math_et_conversion_donnees.py](Proj/fcts_math_et_conversion_donnees.py) qui contient principalement les fonctions mathématiques trouvées dans l'article de référence.   
