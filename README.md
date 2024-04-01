@@ -22,7 +22,8 @@ import copy
 
 ## INSTALLATION
 
-En respectant la structure des dossiers, télécharger le contenu de [Proj](Proj) et de [donnees](donnees)
+En respectant la structure des dossiers, télécharger le contenu de [Proj](Proj) pour avoir les fonctions et de [donnees](donnees) pour connaitre la forme des données d'entrainement.  
+Vous n'avez besoin que de manipuler le fichier [zone_test.py](Proj/zone_test.py) en "commentant"/"décommentant" les lignes qui vous intéresse. En lisant la documentation de la fonction ```python tree_build_fct()```
 
 
 
