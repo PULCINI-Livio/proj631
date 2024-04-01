@@ -54,32 +54,6 @@ def get_best_att_gr(codex:dict):
     else:
         return best
     
-def get_best_att_gr(codex:dict):
-    """
-    Retourne l'attribut ayant le meilleur gain avec la méthode gain ratio
-
-    Parameters
-    ----------
-    codex : dict
-        le dictionnaire organisé des données
-
-    Returns
-    -------
-    best : str
-        l'attribut au gain le plus élevé
-
-    """
-    list_att = codex["liste_attributs"]
-
-    best = list_att[0]
-    for att in list_att[1:-1]:
-        if (gain_ratio(att,codex)) > gain_ratio(best,codex):
-            best = att
-    if best == -1:
-        raise ValueError("Pas de meilleur attribut")
-    else:
-        return best
-
 
 
 def get_best_att_gini(codex:dict):
