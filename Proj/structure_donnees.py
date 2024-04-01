@@ -23,6 +23,10 @@ class NoeudDecision:
         self.resultat = resultat  # Résultat (étiquette de classe) pour ce noeud s'il est une feuille
 
     def __str__(self, niveau=0):
+        """
+        Ecrit en collaboration avec ChatGPT
+        """
+        
         representation = ""
 
         # Si l'attribut n'est pas None, l'ajouter à la représentation

@@ -473,7 +473,8 @@ def prediction(tree:NoeudDecision,exemple:list):
     return res
 
 def construire_matrice_confusion(tree:NoeudDecision, train_file:str):
-    """Renvoie une matrice de confusion à partir de l'arbre et des donnees d'entrainement
+    """Renvoie une matrice de confusion à partir de l'arbre et des donnees d'entrainement\n
+    Ecrit en collaboration avec ChatGPT
 
     Parameters
     ----------
