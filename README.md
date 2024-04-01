@@ -1,5 +1,6 @@
 # PROJ631-Arbres de décision – de Id3 à C4.5
 
+## INTRO
 L'objectif de ce projet est de se familiariser avec la notion d'arbre de décision.
 J'ai donc créé un programme pour m'aider dans cette tâche
 
@@ -12,12 +13,17 @@ Le programme se décompose en plusieurs parties:
     - [tree_build.py](Proj/tree_build.py) qui contient les fonctions de construction de l'arbre, de prédiction, de génération de la matrices ainsi que des fonctions en cours de développement comme celle du post-élagage de l'arbre.   
     - [zone_test.py](Proj/zone_test.py) permet de générer des arbres avec différentes méthodes d'évaluation, des dictionnaires, des matrices de confusion, etc...   
 
-
 Liste des modules/bibliothèques utilisées:
 ```python
 import csv
 import math
 import copy
 ```
+
+## INSTALLATION
+
+En respectant la structure des dossiers, télécharger le contenu de [Proj](Proj) et de [donnees](donnees)
+
+
 
 
