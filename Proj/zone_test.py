@@ -37,6 +37,6 @@ print("matrice de confusion gini")
 M_pred_gini = construire_matrice_confusion(tree_fct_gini,"donnees/golf_pred.csv")
 print(M_pred_gini)
 
-#construction de l'arbre à attributs continue ne fonctionnera pr l'instant que avec la méthode gain ratio
+#construction de l'arbre à attributs continue ne fonctionnera pr l'instant que avec la méthode gain ratio (en cours de developpement)
     
         
