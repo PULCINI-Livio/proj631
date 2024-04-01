@@ -509,11 +509,17 @@ def post_elagage(tree:NoeudDecision, codex):
 
     for branche in tree.branches:
         full_feuille = True
-        for sous_branche in tree.branches[branche].branches:
-            if sous_branche[branche].resultat != None:
+        print(branche)
+        print(tree.branches[branche])
+        print(tree.branches[branche].branches)
+        for sous_noeud in tree.branches[branche].branches:#sous noeud est une clé d'un dico branches
+            #print(tree.branches[branche].branches[sous_noeud] != None)
+            if tree.branches[branche].branches[sous_noeud] != None:
+                print(111111)
                 full_feuille = False
         if not full_feuille: #Si on arrive pas à des feuilles pour toutes les branches du sous arbre
-            post_elagage(sous_branche[branche],codex)
+            print(22222)
+            post_elagage(tree.branches[branche],codex)
         else:
             if len(list(tree.branches[branche].branches)) != 2: #on ne fait rien si binaire
                 occur = {}
@@ -530,7 +536,7 @@ def post_elagage(tree:NoeudDecision, codex):
                 tree.branches[branche].valeur = None
                 tree.branches[branche].branches = None
                 tree.branches[branche].resultat = predominant
-                
+    return tree     
             
 #-------------------------------#
 #-------------TEST--------------#
@@ -557,3 +563,13 @@ def post_elagage(tree:NoeudDecision, codex):
 """tree_fct = tree_build_fct("donnees/golf.csv")
 print("tree_fct")
 print(tree_fct)"""
+
+codex = lecture("donnees/golf.csv")
+print("codex")
+print(codex)
+
+tree_fct_gain = tree_build_fct("donnees/golf.csv","gain")
+print("tree_fct gain:\n")
+#print(tree_fct_gain)
+
+print(post_elagage(tree_fct_gain, codex))
