@@ -509,16 +509,16 @@ def post_elagage(tree:NoeudDecision, codex):
 
     for branche in tree.branches:
         full_feuille = True
-        print(branche)
-        print(tree.branches[branche])
-        print(tree.branches[branche].branches)
+        #print(branche)
+        #print(tree.branches[branche])
+        #print(tree.branches[branche].branches)
         for sous_noeud in tree.branches[branche].branches:#sous noeud est une clé d'un dico branches
             #print(tree.branches[branche].branches[sous_noeud] != None)
             if tree.branches[branche].branches[sous_noeud] != None:
-                print(111111)
+                #print(111111)
                 full_feuille = False
         if not full_feuille: #Si on arrive pas à des feuilles pour toutes les branches du sous arbre
-            print(22222)
+            #print(22222)
             post_elagage(tree.branches[branche],codex)
         else:
             if len(list(tree.branches[branche].branches)) != 2: #on ne fait rien si binaire
@@ -537,39 +537,3 @@ def post_elagage(tree:NoeudDecision, codex):
                 tree.branches[branche].branches = None
                 tree.branches[branche].resultat = predominant
     return tree     
-            
-#-------------------------------#
-#-------------TEST--------------#
-#-------------------------------#
-
-#print(occurrence_classe_donnees("donnees/golf.csv"))
-#print("pour l'arbre")
-#print(occurrence_classe_tree("donnees/golf.csv"))
-#print("pour les donnees")
-#print(occurrence_classe_donnees("donnees/golf.csv"))
-
-#test=["rain","mild","high","false","yes"]
-#print(prediction(tree,test))
-
-#print(list(codex["liste_valeurs_possibles"].values())[-1][0])
-#donnees = [['Chaud', 'Haute', 'Non'], ['Chaud', 'Haute', 'Non'], ['Chaud', 'Haute', 'Non'], ['Chaud', 'Normal', 'Oui']]
-#print(occurence_val('Chaud',donnees))
-#codex = {'liste_attributs': ['Temperature', 'Humidite', 'Jouer au tennis'], 'liste_valeurs_possibles': {'Jouer au tennis': ['Non', 'Oui']}, 'donnees': [['Chaud', 'Haute', 'Non'], ['Chaud', 'Haute', 'Non'], ['Chaud', 'Haute', 'Non'], ['Chaud', 'Normal', 'Oui']]}
-#print(list(codex["liste_valeurs_possibles"].values())[-1])
-#print(get_best_att_gain(lecture("donnees/golf.csv")))
-#print(partitionner("humidity",'high',lecture("donnees/golf.csv")))
-
-#Version moins visuelle n'incluant pas les branches "null"
-"""tree_fct = tree_build_fct("donnees/golf.csv")
-print("tree_fct")
-print(tree_fct)"""
-
-"""codex = lecture("donnees/golf.csv")
-print("codex")
-print(codex)
-
-tree_fct_gain = tree_build_fct("donnees/golf.csv","gain")
-print("tree_fct gain:\n")
-#print(tree_fct_gain)
-
-print(post_elagage(tree_fct_gain, codex))"""
